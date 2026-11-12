@@ -5,8 +5,8 @@ services:
     image: postgres:17-alpine
     environment:
       POSTGRES_DB: kursed
-      POSTGRES_USER: kursed
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kursed_dev_password}
+      POSTGRES_USER: ${POSTGRES_USER:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     volumes:
@@ -25,20 +25,22 @@ services:
       PGHOST: postgres
       PGPORT: "5432"
       PGDATABASE: kursed
-      PGUSER: kursed
-      PGPASSWORD: ${POSTGRES_PASSWORD:-kursed_dev_password}
+      PGUSER: ${POSTGRES_USER:-root}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-root}
       PGCONNECT_TIMEOUT: "10"
       SQL_DIR: /sql
+      SQL_SCHEMA_FILE: ${SQL_SCHEMA_FILE}
+      SQL_FUNCTIONS_FILE: ${SQL_FUNCTIONS_FILE}
     volumes:
       - type: bind
-        source: ./kursed_postgresql12_dbeaver.sql
-        target: /sql/kursed_postgresql12_dbeaver.sql
+        source: ./${SQL_SCHEMA_FILE}
+        target: /sql/${SQL_SCHEMA_FILE}
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ./komkont_triggers_12_functions.sql
-        target: /sql/komkont_triggers_12_functions.sql
+        source: ./${SQL_FUNCTIONS_FILE}
+        target: /sql/${SQL_FUNCTIONS_FILE}
         read_only: true
         bind:
           create_host_path: false
